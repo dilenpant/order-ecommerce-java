@@ -87,7 +87,7 @@ public class OrderService implements IOrderService {
             return;
         }
 
-        List<OrderStatus> orderStatusList = Arrays.stream(OrderStatus.values()).filter(orderStatus -> orderStatus.toString().equalsIgnoreCase(status)).toList();
+        List<OrderStatus> orderStatusList = Arrays.stream(OrderStatus.values()).filter(orderStatus -> orderStatus.toString().equalsIgnoreCase(status)).collect(Collectors.toList());
         if (orderStatusList.isEmpty()) {
             log.error("Invalid status = {}, failed to update order status for id = {}", status, orderId);
             return;
