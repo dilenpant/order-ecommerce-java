@@ -1,20 +1,19 @@
 package com.order.ecommerce.controller;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import com.order.ecommerce.dto.OrderDto;
 import com.order.ecommerce.dto.OrderResponseDto;
 import com.order.ecommerce.enums.OrderStatus;
 import com.order.ecommerce.service.OrderService;
 import com.order.ecommerce.util.OrderUtil;
-import com.order.ecommerce.validation.OrderControllerValidation;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class OrderControllerTest {
@@ -23,8 +22,6 @@ class OrderControllerTest {
 
     @Mock
     private OrderService orderService;
-    @Mock
-    private OrderControllerValidation validator;
     @InjectMocks
     private OrderController orderController;
 
