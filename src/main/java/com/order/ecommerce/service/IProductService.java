@@ -11,4 +11,6 @@ public interface IProductService {
     ProductDto findProductById(String productId);
 
     List<ProductDto> findAllById(List<String> ids);
+
+    List<ProductDto> getAllProducts(int offSet, int pageSize);
 }

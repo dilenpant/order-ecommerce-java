@@ -1,6 +1,8 @@
 package com.order.ecommerce.entity;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -11,10 +13,11 @@ import javax.persistence.FetchType;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "ecommerce_address")
-public class Address implements Serializable {
+public class Address extends BaseEntity {
 
     @Id
     @Column(name = "address_id", nullable = false, unique = true)
@@ -40,9 +43,6 @@ public class Address implements Serializable {
 
     @Column(name = "phone", nullable = false)
     private String phone;
-
-    @Column(name = "createdAt", nullable = false)
-    private LocalDate createdAt;
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "billingAddress")
     private Order order;

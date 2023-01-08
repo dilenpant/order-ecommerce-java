@@ -8,14 +8,19 @@ import com.order.ecommerce.dto.ProductDto;
 import com.order.ecommerce.entity.*;
 import com.order.ecommerce.enums.OrderStatus;
 import com.order.ecommerce.enums.PaymentStatus;
+import com.order.ecommerce.exception.ErrorInfo;
+import com.order.ecommerce.exception.OrderNotFoundException;
 import com.order.ecommerce.mapper.OrderDetailsMapper;
 import com.order.ecommerce.repository.*;
+import com.order.ecommerce.validation.OrderControllerValidation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -35,12 +40,13 @@ public class OrderService implements IOrderService {
 
     private final IProductService productService;
     private final OrderDetailsMapper orderDetailsMapper = Mappers.getMapper(OrderDetailsMapper.class);
+    private final OrderControllerValidation validator;
 
     @Override
     @Transactional
     public OrderResponseDto createOrder(OrderDto orderDto) {
         log.info("Creating Order for customer = {}", orderDto.getCustomerId());
-
+        validator.validateArgument(orderDto);
         log.info("Verifying all products exists before generating order");
         List<String> productIds = orderDto.getOrderItems().stream().map(orderItemDto -> orderItemDto.getProductId()).distinct().collect(Collectors.toList());
         List<ProductDto> products = productService.findAllById(productIds);
@@ -67,11 +73,13 @@ public class OrderService implements IOrderService {
 
     @Override
     public OrderDto findOrderById(String orderId) {
+        validator.validateArgument(orderId == null || orderId.isEmpty(), "order id cannot be null or empty");
+
         log.info("Finding order for orderId = {}", orderId);
         Optional<Order> order = orderRepository.findById(orderId);
         if (order.isEmpty()) {
             log.info("Cannot find order with id = {}", orderId);
-            return null;
+            throw new OrderNotFoundException(ErrorInfo.builder().message("Cannot find order").field(orderId).build());
         }
 
         log.info("Successfully found order for orderId = {}", orderId);
@@ -80,6 +88,8 @@ public class OrderService implements IOrderService {
 
     @Override
     public void updateOrderStatus(String orderId, String status) {
+        validator.validateArgument(orderId == null || orderId.isEmpty(), "order id cannot be null or empty");
+        validator.validateArgument(status == null || status.isEmpty(), "order status cannot be null or empty");
         OrderDto orderDto = findOrderById(orderId);
 
         if (orderDto == null) {
@@ -125,16 +135,15 @@ public class OrderService implements IOrderService {
         return (List<OrderItem>) orderItemRepository.saveAll(orderItemList);
     }
 
-    private Payment buildAndSavePayment(double amount, String paymentMode) {
-        Payment payment = new Payment(
-                UUID.randomUUID().toString(),
-                amount,
-                paymentMode,
-                UUID.randomUUID().toString(),
-                PaymentStatus.PROCESSING.name(),
-                LocalDate.now(),
-                null
-        );
+    private Payment buildAndSavePayment(BigDecimal amount, String paymentMode) {
+        Payment payment = Payment.builder().paymentId(UUID.randomUUID().toString())
+                .amount(amount)
+                .paymentMode(paymentMode)
+                .paymentStatus(PaymentStatus.PROCESSING.name())
+                .createdAt(LocalDate.now())
+                .confirmationNumber(UUID.randomUUID().toString())
+                .build();
+
         log.info("Saving payment details for payment id = {}", payment.getPaymentId());
         return paymentRepository.save(payment);
     }

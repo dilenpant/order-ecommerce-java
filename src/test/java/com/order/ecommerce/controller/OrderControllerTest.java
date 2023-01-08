@@ -9,6 +9,7 @@ import com.order.ecommerce.dto.OrderResponseDto;
 import com.order.ecommerce.enums.OrderStatus;
 import com.order.ecommerce.service.OrderService;
 import com.order.ecommerce.util.OrderUtil;
+import com.order.ecommerce.validation.OrderControllerValidation;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,6 +23,8 @@ class OrderControllerTest {
 
     @Mock
     private OrderService orderService;
+    @Mock
+    private OrderControllerValidation validator;
     @InjectMocks
     private OrderController orderController;
 

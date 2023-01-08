@@ -7,6 +7,8 @@ import com.order.ecommerce.repository.IProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -55,6 +57,13 @@ public class ProductService implements IProductService {
         }
         log.info("Successfully found {} products", productList.size());
         return productList.stream().map(product -> productMapper.toProductDto(product)).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProductDto> getAllProducts(int offSet, int pageSize) {
+        Pageable page = PageRequest.of(offSet, pageSize);
+        var products = productRepository.findAll(page);
+        return  products.stream().map(product -> productMapper.toProductDto(product)).collect(Collectors.toList());
     }
 
 }

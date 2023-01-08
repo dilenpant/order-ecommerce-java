@@ -57,6 +57,7 @@ server:
   port: 8082
 
 ---
+# dev profile
 spring.config.activate.on-profile: dev
 
 server:

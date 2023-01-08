@@ -1,6 +1,8 @@
 package com.order.ecommerce.entity;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.Id;
 import javax.persistence.Entity;
@@ -12,10 +14,12 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
-@Data
+
 @Entity
+@Getter
+@Setter
 @Table(name = "ecommerce_product")
-public class Product implements Serializable {
+public class Product extends BaseEntity {
 
     @Id
     @Column(name = "product_id", nullable = false, unique = true)
@@ -32,9 +36,6 @@ public class Product implements Serializable {
 
     @Column(name = "price", nullable = false)
     private double price;
-
-    @Column(name = "createdAt", nullable = false)
-    private LocalDate createdAt;
 
     @OneToMany(targetEntity = OrderItem.class, fetch = FetchType.LAZY, mappedBy = "product")
     private List<OrderItem> orderItems;

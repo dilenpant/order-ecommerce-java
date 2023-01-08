@@ -1,16 +1,19 @@
 package com.order.ecommerce.entity;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
-@Data
 @Entity
+@Getter
+@Setter
 @Table(name = "ecommerce_order")
-public class Order implements Serializable {
+public class Order extends BaseEntity {
 
     @Id
     @Column(name = "order_id", nullable = false, unique = true)
@@ -39,9 +42,6 @@ public class Order implements Serializable {
 
     @Column(name = "shipping_mode")
     private String shippingMode;
-
-    @Column(name = "created_at")
-    private LocalDate createdAt;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(referencedColumnName = "payment_id", name = "payment_id")
